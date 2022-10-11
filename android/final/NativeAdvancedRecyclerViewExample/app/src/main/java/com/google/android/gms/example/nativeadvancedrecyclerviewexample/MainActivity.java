@@ -15,19 +15,23 @@
  */
 package com.google.android.gms.example.nativeadvancedrecyclerviewexample;
 
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.gms.ads.nativead.NativeAd;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +43,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.subjects.PublishSubject;
+import timber.log.Timber;
 
 /**
  * A simple activity showing the use of {@link NativeAd} ads in
@@ -55,16 +62,20 @@ public class MainActivity extends AppCompatActivity {
     // List of MenuItems and native ads that populate the RecyclerView.
     private List<Object> mRecyclerViewItems = new ArrayList<>();
 
+    private PublishSubject<String> stringPublicSubject = PublishSubject.create();
+
     // List of native ads that have been successfully loaded.
-    private List<UnifiedNativeAd> mNativeAds = new ArrayList<>();
+    private List<NativeAd> mNativeAds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Timber.plant(new Timber.DebugTree());
 
         // Initialize the Mobile Ads SDK.
-        MobileAds.initialize(this, getString(R.string.admob_app_id));
+//        MobileAds.initialize(this, getString(R.string.admob_app_id));
+        MobileAds.initialize(this);
 
         if (savedInstanceState == null) {
             // Create new fragment to display a progress spinner while the data set for the
@@ -94,44 +105,40 @@ public class MainActivity extends AppCompatActivity {
 
         int offset = (mRecyclerViewItems.size() / mNativeAds.size()) + 1;
         int index = 0;
-        for (UnifiedNativeAd ad : mNativeAds) {
+        for (NativeAd ad : mNativeAds) {
             mRecyclerViewItems.add(index, ad);
             index = index + offset;
         }
         loadMenu();
     }
 
-private void loadNativeAds() {
+    private void loadNativeAds() {
 
-    AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
-    adLoader = builder.forUnifiedNativeAd(
-        new UnifiedNativeAd.OnUnifiedNativeAdLoadedListener() {
-            @Override
-            public void onUnifiedNativeAdLoaded(UnifiedNativeAd unifiedNativeAd) {
-                // A native ad loaded successfully, check if the ad loader has finished loading
-                // and if so, insert the ads into the list.
-                mNativeAds.add(unifiedNativeAd);
-                if (!adLoader.isLoading()) {
-                    insertAdsInMenuItems();
+//        ca-app-pub-3940256099942544/2247696110
+//    ca-app-pub-3940256099942544/1044960115
+        AdLoader.Builder builder = new AdLoader.Builder(this, getString(R.string.ad_unit_id));
+        adLoader = builder.forNativeAd(
+                nativeAd -> {
+                    mNativeAds.add(nativeAd);
+                    if (!adLoader.isLoading()) {
+                        insertAdsInMenuItems();
+                    }
                 }
-            }
-        }).withAdListener(
-        new AdListener() {
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                // A native ad failed to load, check if the ad loader has finished loading
-                // and if so, insert the ads into the list.
-                Log.e("MainActivity", "The previous native ad failed to load. Attempting to"
-                    + " load another.");
-                if (!adLoader.isLoading()) {
-                    insertAdsInMenuItems();
-                }
-            }
-        }).build();
+        ).withAdListener(
+                new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                        Timber.d("The previous native ad failed to load. Attempting to"
+                                + " load another.");
+                        if (!adLoader.isLoading()) {
+                            insertAdsInMenuItems();
+                        }
+                    }
+                }).build();
 
-    // Load the Native ads.
-    adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
-}
+        // Load the Native ads.
+        adLoader.loadAds(new AdRequest.Builder().build(), NUMBER_OF_ADS);
+    }
 
     private void loadMenu() {
         // Create new fragment and transaction

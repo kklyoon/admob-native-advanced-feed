@@ -16,7 +16,7 @@
 package com.google.android.gms.example.nativeadvancedrecyclerviewexample;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +25,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAd;
-import com.google.android.gms.ads.formats.UnifiedNativeAdView;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 import java.util.List;
 
@@ -35,6 +35,7 @@ import java.util.List;
  * The {@link RecyclerViewAdapter} class.
  * <p>The adapter provides access to the items in the {@link MenuItemViewHolder}
  */
+@SuppressWarnings("ALL")
 class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // A menu item view type.
     private static final int MENU_ITEM_VIEW_TYPE = 0;
@@ -89,7 +90,7 @@ class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
 
         Object recyclerViewItem = mRecyclerViewItems.get(position);
-        if (recyclerViewItem instanceof UnifiedNativeAd) {
+        if (recyclerViewItem instanceof NativeAd) {
             return UNIFIED_NATIVE_AD_VIEW_TYPE;
         }
         return MENU_ITEM_VIEW_TYPE;
@@ -125,7 +126,7 @@ public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     int viewType = getItemViewType(position);
     switch (viewType) {
         case UNIFIED_NATIVE_AD_VIEW_TYPE:
-            UnifiedNativeAd nativeAd = (UnifiedNativeAd) mRecyclerViewItems.get(position);
+            NativeAd nativeAd = (NativeAd) mRecyclerViewItems.get(position);
             populateNativeAdView(nativeAd, ((UnifiedNativeAdViewHolder) holder).getAdView());
             break;
         case MENU_ITEM_VIEW_TYPE:
@@ -148,8 +149,8 @@ public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
     }
 }
 
-private void populateNativeAdView(UnifiedNativeAd nativeAd,
-                                  UnifiedNativeAdView adView) {
+private void populateNativeAdView(NativeAd nativeAd,
+                                  NativeAdView adView) {
     // Some assets are guaranteed to be in every UnifiedNativeAd.
     ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
     ((TextView) adView.getBodyView()).setText(nativeAd.getBody());

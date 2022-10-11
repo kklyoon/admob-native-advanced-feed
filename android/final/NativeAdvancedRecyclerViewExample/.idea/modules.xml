@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NativeAdvancedRecyclerViewExample.iml" filepath="$PROJECT_DIR$/NativeAdvancedRecyclerViewExample.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NativeAdvancedRecyclerViewExample.iml" filepath="$PROJECT_DIR$/.idea/modules/NativeAdvancedRecyclerViewExample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/NativeAdvancedRecyclerViewExample.app.unitTest.iml" />
     </modules>
   </component>
 </project>
